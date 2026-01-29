@@ -11,13 +11,21 @@ const server = createServer((req, res) => {
   if (url === '/' && method === 'GET') {
     res.end('Hello programmer!');
   }
-
+  let body = ''
   if (url === '/validator' && method === 'POST') {
-   
+    req.on('data', chunk => {
+      body += chunk;
+    });
 
     req.on('end', async () => {
-      const { cpf } = JSON.parse(req.body);
+      const { cpf } = JSON.parse(body);
+
       const result = await validateCPF(cpf);
+
+      // result.then(result => {
+      //   console.log('Sending response:', result);
+      // });
+
       res.setHeader('Content-Type', 'application/json');
       res.end(JSON.stringify(result));
     });
